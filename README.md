@@ -169,7 +169,5 @@ export function useLogoBackground(symbol: string) {
 }
 ```
 
----
-
 ## 9. License
-MIT
+
