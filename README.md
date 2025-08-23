@@ -170,42 +170,6 @@ export function useLogoBackground(symbol: string) {
 ```
 
 ---
-## 9. Publishing to npm
-Prereqs: `npm login`, bump `version` in `package.json`.
 
-```bash
-npm install
-npm test
-npm run build
-npm pack --dry-run
-npm publish --access public
-# or
-pnpm publish --access public
-```
-
-After publish:
-```bash
-npm install background-colour-suggestion-library@latest
-```
-
-Tag release:
-```bash
-git tag v0.1.1
-git push origin v0.1.1
-```
-
-Versioning:
-- Patch: tuning / internal
-- Minor: new helpers / non-breaking changes
-- Major: breaking API adjustments
-
----
-## 10. Roadmap Ideas
-- Contrast ratio reporting.
-- Palette selection beyond light/dark.
-- Batch analyzer / caching CLI.
-- `npx bcsuggest <symbol>` CLI.
-
----
-## 11. License
+## 9. License
 MIT
