@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Background Suggestion Demo</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { margin: 0; padding: 1.25rem; background:#161616; color:#f5f5f5; }
+    h1 { font-size:1.2rem; margin:0 0 1rem; }
+    .grid { display:grid; gap:1.5rem; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); }
+    .card { background:#222; padding:1rem; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,.4); position:relative; }
+    .logo-wrapper { width:140px; height:140px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto .75rem; transition:background .25s, box-shadow .25s; overflow:hidden; }
+    .logo-wrapper img { max-width:90%; max-height:90%; image-rendering:-webkit-optimize-contrast; }
+    .meta { font-size:.7rem; line-height:1.2; opacity:.8; word-break:break-word; }
+    button { cursor:pointer; padding:.5rem .9rem; font-size:.8rem; border-radius:6px; border:1px solid #333; background:#2d2d2d; color:#eee; }
+    button:hover { background:#3a3a3a; }
+    #controls { display:flex; gap:.75rem; flex-wrap:wrap; align-items:center; margin-bottom:1rem; }
+    .raw-indicator { position:absolute; top:6px; right:10px; font-size:.6rem; background:#444; padding:2px 6px; border-radius:20px; letter-spacing:.05em; }
+    .light-bg { background:#ffffff; color:#111; }
+    .dark-bg { background:#111111; color:#eee; }
+    .split { display:flex; gap:1rem; flex-wrap:wrap; }
+  </style>
+</head>
+<body>
+  <h1>Logo Background Suggestion (AMZN & BRK-A)</h1>
+  <div id="controls">
+    <button id="toggleModeBtn" type="button">Mode: Suggested (click to show Raw)</button>
+    <button id="refreshBtn" type="button">Refresh Logos</button>
+  </div>
+  <div class="grid" id="logoGrid"></div>
+  <script type="module">
+  import { chooseFmpSymbolBackgroundColorBrowser } from '../dist/esm/index.js';
+
+    const symbols = ['AMZN','BRK-A'];
+    let showRaw = false;
+
+    const toggleBtn = document.getElementById('toggleModeBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const grid = document.getElementById('logoGrid');
+
+    toggleBtn.addEventListener('click', () => {
+      showRaw = !showRaw;
+      toggleBtn.textContent = showRaw ? 'Mode: Raw (click to show Suggested)' : 'Mode: Suggested (click to show Raw)';
+      load();
+    });
+    refreshBtn.addEventListener('click', load);
+
+    async function load() {
+      grid.innerHTML='';
+      for (const sym of symbols) {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const wrap = document.createElement('div');
+        wrap.className = 'logo-wrapper';
+        const img = document.createElement('img');
+        img.alt = sym + ' logo';
+        img.decoding = 'async';
+        img.loading = 'lazy';
+        const src = `https://images.financialmodelingprep.com/symbol/${encodeURIComponent(sym)}.png`;
+        img.src = src + '?t=' + Date.now(); // cache-bust for demo refresh
+
+        let appliedTone = 'raw';
+        let confidence = '';
+        if (!showRaw) {
+          try {
+            const { color, suggestion } = await chooseFmpSymbolBackgroundColorBrowser(sym, { minConfidenceForUse: 0, ignorePureWhite: false });
+            wrap.style.background = color;
+            appliedTone = suggestion.tone;
+            confidence = suggestion.confidence.toFixed(3);
+            wrap.classList.add(suggestion.tone === 'dark' ? 'dark-bg' : 'light-bg');
+          } catch (e) {
+            console.warn('Failed suggestion for', sym, e);
+          }
+        } else {
+          wrap.style.background = '#ffffff';
+          wrap.classList.add('light-bg');
+        }
+
+        wrap.appendChild(img);
+        card.appendChild(wrap);
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.innerHTML = `<strong>${sym}</strong><br>Mode: ${showRaw ? 'Raw' : 'Suggested'}<br>` +
+          (!showRaw ? `Tone: ${appliedTone} (conf ${confidence})` : 'Original (no analysis)') +
+          `<br><a href="${src}" target="_blank" rel="noopener">PNG</a>`;
+        card.appendChild(meta);
+
+        const badge = document.createElement('div');
+        badge.className = 'raw-indicator';
+  badge.textContent = showRaw ? 'RAW' : (appliedTone === 'raw' ? 'RAW' : appliedTone.toUpperCase());
+        card.appendChild(badge);
+
+        grid.appendChild(card);
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
