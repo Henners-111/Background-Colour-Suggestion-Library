@@ -168,6 +168,3 @@ export function useLogoBackground(symbol: string) {
   return state;
 }
 ```
-
-## 9. License
-
