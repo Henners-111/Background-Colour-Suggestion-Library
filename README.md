@@ -55,8 +55,9 @@ A minimal demo in `demo/` shows symbols with a toggle:
 
 Run locally:
 ```bash
+npm install
 npm run build
-npm run demo
+node demo/server.cjs
 # open http://localhost:5173
 ```
 
