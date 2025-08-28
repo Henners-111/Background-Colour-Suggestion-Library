@@ -126,19 +126,8 @@ async function applyLogoBackground(symbol: string) {
 | `totalSampled` | total pixels scanned |
 
 ---
-## 6. Heuristics Overview
-1. Filter low-alpha pixels.
-2. Compute perceived lightness (HSP).
-3. If clearly light/dark → choose opposite background.
-4. If mid‑tone → inspect edge band to infer bias.
-5. Confidence grows with distance from mid range.
 
----
-## 7. Why Not Average Whole Image?
-Transparent backgrounds dominate raw averages; isolating strokes prevents bias toward white/gray.
-
----
-## 8. Integrating on an FMP Symbol Page
+## 6. Integrating on an FMP Symbol Page
 Workflow:
 1. Logo URL: `https://images.financialmodelingprep.com/symbol/<SYMBOL>.png`
 2. Run browser or Node helper for `{ color, suggestion }`.

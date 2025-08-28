@@ -49,8 +49,7 @@
   "build:cjs": "tsc -p tsconfig.cjs.json",
     "test": "vitest run",
     "dev": "vitest watch",
-  "lint": "eslint \"src/**/*.ts\" || echo lint warnings",
-  "demo": "node demo/server.cjs"
+    "lint": "eslint \"src/**/*.ts\" || echo lint warnings"
   },
   "devDependencies": {
     "@types/node": "^20.19.11",
